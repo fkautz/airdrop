@@ -134,21 +134,24 @@ class App < Thor
     Airdrop.status
   end
 
-  desc "run SERVICE PARAMETERS", "starts a service"
+  desc "start SERVICE PARAMETERS", "starts a service"
   def start(service, parameters="")
     connect
+    puts "starting #{service}"
     Airdrop.start(service, parameters)
   end
 
   desc "stop SERVICE", "stops a service"
   def stop(service)
     connect
+    puts "stopping #{service}"
     Airdrop.stop(service)
   end
 
   desc "backup SERVICE", "backups data from a service"
   def backup(service)
     connect
+    puts "backing up #{service}"
     Airdrop.backup(service)
   end
 
