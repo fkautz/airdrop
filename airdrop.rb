@@ -10,13 +10,13 @@ class RunningServices < ActiveRecord::Base
 end
 
 class Airdrop
-  def self.start(service)
+  def self.start(service, parameters)
     if !running(service)
       dataDir = "#{@repoDir}/#{service}/data"
       logsDir = "#{@repoDir}/#{service}/logs"
       `mkdir -p #{dataDir}`
       `mkdir -p #{logsDir}`
-      id = `docker run -d -v #{dataDir}:/data -v #{logsDir}:/logs #{service}`
+      id = `docker run -d -v #{dataDir}:/data -v #{logsDir}:/logs #{parameters} #{service}`
       id = id.strip
       if id.length > 0
         state = RunningServices.new(service: service, container_id: id)
@@ -44,23 +44,23 @@ class Airdrop
     end
   end
 
-  def self.upgrade(service)
-    # check if upgrade necessary
-    if upgradeAvailable(service)
-      id = getImageId(service)
-      # stop container
-      stop(service)
-      # backup container data and logs
-      backup(service, id)
-      # run
-      success = start(service)
-      if !success
-        rollback(service, version)
-      end
-    else
-      raise "Image is already at the latest version"
-    end
-  end
+#  def self.upgrade(service)
+#    # check if upgrade necessary
+#    if upgradeAvailable(service)
+#      id = getImageId(service)
+#      # stop container
+#      stop(service)
+#      # backup container data and logs
+#      backup(service, id)
+#      # run
+#      success = start(service)
+#      if !success
+#        rollback(service, version)
+#      end
+#    else
+#      raise "Image is already at the latest version"
+#    end
+#  end
 
   def self.upgradeAvailable(service)
     current_image = getImageId(service)
@@ -134,10 +134,10 @@ class App < Thor
     Airdrop.status
   end
 
-  desc "start SERVICE", "starts a service"
-  def start(service)
+  desc "run SERVICE PARAMETERS", "starts a service"
+  def start(service, parameters="")
     connect
-    Airdrop.start(service)
+    Airdrop.start(service, parameters)
   end
 
   desc "stop SERVICE", "stops a service"
@@ -152,11 +152,11 @@ class App < Thor
     Airdrop.backup(service)
   end
 
-  desc "upgrade SERVICE", "upgrades a service"
-  def upgrade(service)
-    connect
-    Airdrop.upgrade(service)
-  end
+#  desc "upgrade SERVICE", "upgrades a service"
+#  def upgrade(service)
+#    connect
+#    Airdrop.upgrade(service)
+#  end
 end
 
 App.start
