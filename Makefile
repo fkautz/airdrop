@@ -1,0 +1,13 @@
+default: clean build package
+clean:
+	rm -rf vendor
+	rm -rf airdrop.tar
+
+build:
+	mkdir vendor
+	docker build -t airdrop .
+	docker run -v `pwd`:/airdrop airdrop bundle install --path vendor/bundle
+
+package:
+	tar -cvf airdrop.tar *
+	gzip airdrop.tar
