@@ -7,6 +7,5 @@ RUN apt-get install -y libsqlite3-dev
 RUN apt-get install -y ruby1.9.1
 RUN apt-get install -y ruby1.9.1-dev
 RUN gem install bundler
-ADD docker-0.6.3-dev /usr/bin/docker
 VOLUME /airdrop
 WORKDIR /airdrop

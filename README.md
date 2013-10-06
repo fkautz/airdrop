@@ -53,3 +53,6 @@ Airdrop commands:
   airdrop.rb status                    # shows running containers
   airdrop.rb stop SERVICE              # stops a service
 
+Developer Notes
+---------------
+This package uses docker to pull and build gems.
